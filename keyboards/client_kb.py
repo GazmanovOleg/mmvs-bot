@@ -1,27 +1,21 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from aiogram.types import  InlineKeyboardMarkup,InlineKeyboardButton
 
-b1 = KeyboardButton('/service')
-b2 = KeyboardButton('/about_us')
-b3 = KeyboardButton('/get_in_touch')
-
-kb_client = ReplyKeyboardMarkup(resize_keyboard=True)
+kb_client = InlineKeyboardMarkup(row_width=2)
+b1 = InlineKeyboardButton(text="Услуги", callback_data='service')
+b2 = InlineKeyboardButton(text="О нас", callback_data='about_us')
+b3 = InlineKeyboardButton(text="Связаться с нами", callback_data='get_in_touch')
 
 kb_client.row(b1,b2,b3)
 
-kb_main = ReplyKeyboardMarkup(resize_keyboard=True)
+kb_service = InlineKeyboardMarkup()
+bs1 = InlineKeyboardButton(text="Приложение", callback_data='application')
+bs2 = InlineKeyboardButton(text="Разработка", callback_data='development')
+bs3 = InlineKeyboardButton(text="Видеосервисы", callback_data='video_services')
+bs4 = InlineKeyboardButton(text="Сервисы онлайн вещания", callback_data='broadcasting')
+bs5 = InlineKeyboardButton(text="Назад", callback_data='back')
+kb_service.row(bs1,bs2,bs3,bs4,bs5)
 
-bm1 = KeyboardButton(text="Услуги")
-bm2 = KeyboardButton(text="О нас")
-bm3 = KeyboardButton(text="Связаться с нами")
-
-kb_main.row(bm1,bm2,bm3)
-
-
-kb_service = ReplyKeyboardMarkup(resize_keyboard=True)
-bs1 = KeyboardButton(text="Приложение")
-bs2 = KeyboardButton(text="Разработка")
-bs3 = KeyboardButton(text="Видеосервис")
-bs4 = KeyboardButton(text="Сервис оналйн вещания")
-bs5 = KeyboardButton(text="Back")
-
-kb_service.add(bs1).add(bs2).add(bs3).add(bs4).add(bs5)
+kb_get_in_touch = InlineKeyboardMarkup()
+bg1 = InlineKeyboardButton(text="Назначить встерчу", callback_data='make_appointment')
+bg2 = InlineKeyboardButton(text="Назад", callback_data='back')
+kb_get_in_touch.row(bg1, bg2)
