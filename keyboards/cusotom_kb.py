@@ -66,8 +66,6 @@ def create_time_btn():
 
 
 
-
-
 def create_inline_kb(width: int, btn_source) -> InlineKeyboardMarkup:
     
     LEXICON, BUTTONS = btn_source()
