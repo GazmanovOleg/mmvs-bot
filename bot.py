@@ -9,7 +9,7 @@ async def on_startup():
     print("Бот вышел в онлайн")
 
 #client.register_handlers_client(dp)
-#other.register_handlers_other(dp)
+other.register_handlers_other(dp)
 
 router = Router()
 

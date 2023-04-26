@@ -2,32 +2,29 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from lexicon import  Lexicon 
 import calendar
+from handlers.sqlite import get_busy_times_by_day
 from datetime import datetime
 
 
 def day_by_number(num):
-    return ["Пн", "Вт", "Ср", "Чт", "Пт",][num]
+    return ["Пн", "Вт", "Ср", "Чт", "Пт"][num]
+
 
 def create_date_btn():
     current_datetime = datetime.now()
     day = current_datetime.day
     month = current_datetime.month
     year = current_datetime.year
-
     tc = calendar.TextCalendar(firstweekday=0)
     date_lst = tc.monthdayscalendar(year,month)
-
     num_list = [date for week in date_lst for date in week]
-
-    #date_dict = {i:date for week in date_lst for date in week for i in range(len(num_list)) }
     btn_lst = [f"{day_by_number(j)} {i[j]}" for i in date_lst for j in range(len(i)) if i[j] !=0 and j!=5 and j!=6 and i[j]>=day]
     LEXICON = {f"butd_{i+1}":btn_lst[i] for i in range(len(btn_lst))}
     BUTTONS = {f"btnd_{i+1}":str(i+1) for i in range(len(LEXICON))}
-    
-    return LEXICON, BUTTONS
+    return LEXICON
 
 
-def create_time_btn():
+def create_time_btn(day):
     LEXICON: dict[str, str] = {
     'buth_1': '13:00',
     'buth_2': '13:30',
@@ -44,6 +41,12 @@ def create_time_btn():
     'buth_13': '19:00',
     'buth_14': '19:30',
     'buth_15': '20:00',}
+
+    times = get_busy_times_by_day(day)
+    
+    print(f'бизя таймс {times}')
+    date_lst = [i[0] for i in times]
+    LEXICON = {i[0]:i[1] for i in LEXICON.items() if i[1] not in date_lst}
 
     BUTTONS: dict[str, str] = {
         'btnh_1': '1',
@@ -62,13 +65,11 @@ def create_time_btn():
         'btnh_14': '14',
         'btnh_15': '15',}
 
-    return LEXICON, BUTTONS
+    return LEXICON
 
 
-
-def create_inline_kb(width: int, btn_source) -> InlineKeyboardMarkup:
+def create_inline_kb(width: int, LEXICON) -> InlineKeyboardMarkup:
     
-    LEXICON, BUTTONS = btn_source()
 
     kb_builder: InlineKeyboardBuilder = InlineKeyboardBuilder()
     buttons: list[InlineKeyboardButton] = []
@@ -85,6 +86,7 @@ def create_inline_kb(width: int, btn_source) -> InlineKeyboardMarkup:
     return kb_builder.as_markup()
     
 
+day_keyboard = create_inline_kb(2,create_date_btn())
 
-day_keyboard = create_inline_kb(2,create_date_btn)
-hours_keyboard = create_inline_kb(2,create_time_btn)
+
+#hours_keyboard = create_inline_kb(2,create_time_btn, day)
