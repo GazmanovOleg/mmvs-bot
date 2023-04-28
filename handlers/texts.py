@@ -1,47 +1,56 @@
 START_TEXT = """
-Привет!
+Hello there
+We are a team of experienced and passionate developers who specialize in video service developers. We offer cutting-edge solutions that exceed our customers' expectations.\n
+Our team develops applications, video services and streaming platforms.\n
+With our bot you can learn more about our company, choose a convenient way to contact us or leave a request for us.\n
+Please use the buttons below to select commands
 
-Мы команда опытных и увлеченных своим делом разработчиков, которые специализируются на разработке видео и сетевого программного обеспечения. Мы предлагаем передовые решения, превосходящие ожидания клиентов.
-
-Наша команда занимается работкой приложений, видеосервисов и стриминговых платформ.
-
-С помощью нашего бота Вы сможете больше узнать о нашей компании, выбрать удобный для Вас способ связи или оставить для нас запрос.
-
-Пожалуйста, используйте кнопки ниже для выбора команд
-"""
-"""Услуги (Service)
-О нас (More about us)
-Связаться с нами (Get in touch)
-"""
-SERVICE_TEXT = """Наша команда обладает глубокими техническими знаниями видеотехнологий, что позволяет разработать программное решение любой сложности. Пожалуйста, выберите, какая услуга вам требуется."""
-ABOUT_US_TEXT = """4Key development — это группа IT-специалистов. В состав нашей команды входят разработчики, аналитики, QA-инженеры и менеджеры проектов. Мы занимаемся видео и сетевыми технологиями более 10 лет.
-Наша опытная команда предоставит передовые услуги для вашей конкретной проблемы. Мы сосредоточены на достижении целей клиентов и стараемся предоставлять своевременные и экономически эффективные решения.
-Our tech stack:
-переделать
-	Что делает наши услуги уникальными::
-Схема Time and Materials
-Быстрое время выхода на рынок
-Постоянный контроль за ходом разработки
-"""
-GET_IN_TOUCH_TEXT = """Контакты нашей компании"""
-
-APPLICATION_TEXT = """Мы разрабатываем  мобильные и веб-приложения под любые задачи, особенно если они связаны с видео технологиями.
-Для Вас мы сможем разработать:
-
-	Видеоконференции приложения (Video Conference application)
-	Видеоплееры
-	Видео редакторы
 """
 
-DEVELOPMENT_TEXT = """Наша команда разработчиков проведет анализ, разработает, 
-протестирует и внедрит сервис под Ваши нужды. Мы обладаем компетенцией в работе с базами данных, frontend, backend разработкой,
- что позволяет нам создавать качественные программные продукты любого направления. """
 
-VIDEO_SERVICES = """Наша команда может разработать для Вас онлайн или оффлайн сервис для работы с видео.
-Мы имеем большой опыт работы с видеохостингами, онлайн-плеерами, редакторами видео.
- Также мы можем интегрировать видео сервис на ваш сайт или блог.
+SERVICE_TEXT = """Our team has in-depth technical knowledge of video technology, which allows us to develop a software solution of any complexity. Please choose which service you require."""
+ABOUT_US_TEXT = """4Key Development is a group of IT specialists consisting of developers, analysts, QA engineers and project managers. We have over 10 years experience in video and network technologies.\n 
+Our experienced team delivers cutting edge technology to meet your needs. We are committed to achieving customer goals and strive to provide timely and cost effective solutions.\n 
+What makes our services unique:
+    - The time and materials model
+    - Fast time-to-market (low time-to-market)
+    - Ongoing monitoring of the development process 
+    - Hard-to-find skills in video technology
+
+
+"""
+GET_IN_TOUCH_TEXT = """Get in touch \n WhatsApp \n or E-mail us:\n 4keyteam@gmail.com"""
+
+APPLICATION_TEXT = """We develop mobile and web applications for any task, especially those related to video technology.\n
+We can develop:\n
+    -  Video conference application
+    -  Video players
+    -  Video editors
 """
 
-BROADCASTING_TEXT = """Мы специализируемся на технологиях видео стриминга. Мы готовы добавить стриминговый функционал к чему угодно! Для Вас мы разработаем стриминговый платформу, добавить video live-feed на Ваш сайт, сделаем систему онлайн-видеочата, или сервисы для удаленного подключения к камерам. 
-С опытом нашей команды возможно всё!
+DEVELOPMENT_TEXT = """Our development team will analyze, develop, test and implement the service for your needs. We have expertise in working with databases, front-end and back-end development, which enables us to produce high quality software products in any direction."""
+
+VIDEO_SERVICES = """Our team can develop an online or offline video service for you.\n
+We have extensive experience with video hosting, online players, and video editors.\n
+ We can also integrate a video service on your website or blog.\n
 """
+
+BROADCASTING_TEXT = """We specialize in video streaming technology and can add streaming functionality to anything. \n Our services include developing a streaming platform for you, adding live video feeds to your website, creating online video chat systems and providing remote camera connection services.
+With the experience of our team, anything is possible!
+
+"""
+
+def what_is_this_text(text):
+    answer = ''
+    text = text.split()
+
+    if text == BROADCASTING_TEXT.split():
+        print("Текст зашел в трансляции")
+        answer = "Видео стриминг"
+    if text == VIDEO_SERVICES.split():
+        answer = "Видео сервис"
+    if text == DEVELOPMENT_TEXT.split():
+        answer = "Разработка"
+    if text == APPLICATION_TEXT.split():
+        answer = "Приложение"
+    return answer

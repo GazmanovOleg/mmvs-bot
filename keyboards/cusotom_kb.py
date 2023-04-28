@@ -24,7 +24,8 @@ def create_date_btn():
     return LEXICON
 
 
-def create_time_btn(day):
+async def create_time_btn(day):
+    print(f"день это --->{day}")
     LEXICON: dict[str, str] = {
     'buth_1': '13:00',
     'buth_2': '13:30',
@@ -42,28 +43,11 @@ def create_time_btn(day):
     'buth_14': '19:30',
     'buth_15': '20:00',}
 
-    times = get_busy_times_by_day(day)
-    
+    times = await get_busy_times_by_day(day)
+    print(times)
     print(f'бизя таймс {times}')
     date_lst = [i[0] for i in times]
     LEXICON = {i[0]:i[1] for i in LEXICON.items() if i[1] not in date_lst}
-
-    BUTTONS: dict[str, str] = {
-        'btnh_1': '1',
-        'btnh_2': '2',
-        'btnh_3': '3',
-        'btnh_4': '4',
-        'btnh_5': '5',
-        'btnh_6': '6',
-        'btnh_7': '7',
-        'btnh_8': '8',
-        'btnh_9': '9',
-        'btnh_10': '10',
-        'btnh_11': '11',
-        'btnh_12': '12',
-        'btnh_13': '13',
-        'btnh_14': '14',
-        'btnh_15': '15',}
 
     return LEXICON
 

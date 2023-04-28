@@ -1,38 +1,51 @@
 import  sqlite3 as sq
-
+from config import database
 
 async def db_start():
-    global db, cur
     print("база данных создана")
-    db = sq.connect('new.db')
-    cur = db.cursor()
-    cur.execute("CREATE TABLE IF NOT EXISTS meeting(meeting_id TEXT PRIMARY KEY, date, time, other)")
-    db.commit()
+    await database.connect()
+    await database.execute("CREATE TABLE IF NOT EXISTS meeting(meeting_id TEXT PRIMARY KEY, date, time, service, connection ,other)")
+    # await database.commit()
     
 
 async def create_meeting(meeting_id):
-    meeting = cur.execute("SELECT 1 FROM meeting WHERE meeting_id == '{key}'".format(key =meeting_id)).fetchone()
+    await database.connect()
+    meeting = await database.fetch_one("SELECT 1 FROM meeting WHERE meeting_id == '{key}'".format(key =meeting_id))
     if not meeting:
-        cur.execute("INSERT INTO meeting VALUES(?,?,?,?)", (meeting_id, '', '', ''))
-        db.commit()
-        
-    
+        await database.fetch_one("INSERT INTO meeting VALUES(?,?,?,?,?,?)", (meeting_id, '', '', '', '',''))
+        #await db.commit()
+         
 async def edit_meeting(meeting_id, name, value):
-
-    query = f"UPDATE meeting SET {name} = ? WHERE meeting_id = ?"
-    cur.execute(query, (value, meeting_id))
-    db.commit()  
-
-
-def get_meet_by_id(meeting_id):
-    meeting = cur.execute(f"SELECT date, time FROM meeting WHERE meeting_id == {meeting_id}")
     
-    return meeting.fetchone()
+    await database.connect()
 
-def get_meetings():
-    return  cur.execute(f"SELECT date, time FROM meeting").fetchall()
+    if name == 'date':
+        query = f"UPDATE meeting SET date = :date WHERE meeting_id = :meeting_id"
+       
+        await database.execute(query,values={'date':value,'meeting_id':meeting_id})
+    else:
+        query = f"UPDATE meeting SET {name} = ? WHERE meeting_id = ?"
+        
+        await database.execute(query, (value, meeting_id))
+    #db.commit()  
 
-def get_busy_times_by_day(day):
-    return cur.execute("SELECT time FROM meeting WHERE date == '{key}'".format(key = day)).fetchall()
+
+async def get_meet_by_id(meeting_id):
+    await database.connect()
+    
+    meeting = await database.execute(f"SELECT date, time FROM meeting WHERE meeting_id == {meeting_id}")
+    return await meeting.fetchone()
+
+
+async def get_meetings():
+    await database.connect()
+    
+    return await  database.execute(f"SELECT date, time FROM meeting").fetchall()
+
+
+async def get_busy_times_by_day(day):
+    await database.connect()
+
+    return await database.fetch_all("SELECT time FROM meeting WHERE date == '{key}'".format(key = day))
     
    
