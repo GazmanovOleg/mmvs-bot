@@ -29,7 +29,7 @@ kb_service : InlineKeyboardMarkup = InlineKeyboardMarkup(
                      [bs5]])
 
 
-bg1 = InlineKeyboardButton(text="appoint a meeting", callback_data='make_appointment')
+bg1 = InlineKeyboardButton(text="Appoint a meeting", callback_data='make_appointment')
 bg2 = InlineKeyboardButton(text="Back", callback_data='back')
 kb_get_in_touch : InlineKeyboardMarkup = InlineKeyboardMarkup(inline_keyboard = [[bg1],[bg2]])
 

@@ -1,4 +1,6 @@
 from aiogram import types, Dispatcher
+
+from celeryapp import send_email_t
 from .texts import what_is_this_text
 from create_bot import dp, bot
 from keyboards.client_kb import kb_client, kb_service, kb_get_in_touch, kb_back_to_service, kb_back_to_time, kb_back_to_time, kb_connect
@@ -35,7 +37,6 @@ async def process_start_command(message: types.Message):
         lg = message.from_user.language_code
         time =  datetime.datetime.now()
         mess = f"username: {user_name}, имя пользователя {name}, язык {lg} \n Время обращения: {time} "
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FSFSDFЫfdsDsS")
         await create_meeting(meeting_id=message.from_user.id, other = mess)
         await bot.send_message(message.from_user.id, texts.START_TEXT, parse_mode='HTML', reply_markup=kb_client)
     except:
@@ -70,7 +71,7 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext ):
     
     
     await edit_meeting(callback.from_user.id, 'service', service_name)
-    await callback.message.edit_text(text="<b>Select a date:</b>", reply_markup= create_inline_kb_days('2')[0])
+    await callback.message.edit_text(text="Select a date:", reply_markup= create_inline_kb_days('2')[0])
     await callback.answer()
 
 
@@ -96,7 +97,7 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
         await edit_meeting(callback.from_user.id, 'date', selected_date)
         
         await state.update_data(date=selected_date) #установка даты
-        await callback.message.edit_text(text="<b>Select a time:</b>", reply_markup=await create_inline_kb_time_btn(selected_date))
+        await callback.message.edit_text(text="Select a time:", reply_markup=await create_inline_kb_time_btn(selected_date))
 
     await callback.answer()
 
@@ -105,7 +106,7 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
     """callback после выбора вермени"""
     if callback.data == 'buth_':
               
-        await callback.message.edit_text(text='<b>Select a date:</b>', reply_markup=create_inline_kb_days('1')[0])
+        await callback.message.edit_text(text='Select a date:', reply_markup=create_inline_kb_days('1')[0])
         
     else:
         """Тут будет устанавливаться время"""
@@ -118,7 +119,7 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
         meeting_list.add_to_list(Meeting(meeting_id = callback.from_user.id, time = selected_time))
         await edit_meeting(callback.from_user.id, 'time', selected_time)
         await state.update_data(time=selected_time)
-        text = (f"Выбреите удобное средство связи")
+        text = (f"Choose a convenient means of communication:")
         await callback.message.edit_text(text=text, reply_markup=kb_connect)
 
     await callback.answer()
@@ -130,7 +131,7 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
     if callback.data == 'con_':
         meet_id = callback.from_user.id
         day = (await get_meet_by_id(meet_id))[0]
-        await callback.message.edit_text(text="<b>Select a date:</b>",parse_mode="HTML", reply_markup=await create_inline_kb_time_btn(day))
+        await callback.message.edit_text(text="Select a date:",parse_mode="HTML", reply_markup=await create_inline_kb_time_btn(day))
         
     else:
         """Тут будет устанавливться зум"""
@@ -145,9 +146,13 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
         await state.update_data(connect=connect)
        
         day, time, place = await get_meet_by_id(meet_id)
-        answer = (f"The meeting will take place on {day} at {time}. \n Our manager will contact you.")
-        """Тут отправляется сообщение админу """
+        answer = (f"The meeting will take place on {day} at {time}. \nOur manager will contact you.")
+        
+        """Отправка сообщения"""
+        meeting =  await get_meet_by_id(callback.from_user.id)
+        send_email_t.delay(f'Новая запись: {meeting}')
         await send_email(f'Новая запись: { await get_meet_by_id(callback.from_user.id)}')
+    
         await bot.send_message(424726862, f'Новая запись: { await get_meet_by_id(callback.from_user.id)}')
         await callback.message.edit_text(text=answer, reply_markup=kb_back_to_time)
     await callback.answer()
@@ -158,7 +163,7 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
 async def process_forward_press(callback: CallbackQuery):
     meet_id = callback.from_user.id
     date = get_meet_by_id(meet_id)[0]
-    await callback.message.edit_text(text="<b>Select a time:</b>", reply_markup=create_inline_kb(2,await create_time_btn(date)).as_markup())
+    await callback.message.edit_text(text="Select a time:", reply_markup=create_inline_kb(2,await create_time_btn(date)).as_markup())
     await callback.answer()
 
 @dp.message(Command(commands=['sendall']))
@@ -195,6 +200,8 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
     if callback.data == 'broadcasting':
         await state.update_data(service ='broadcasting')
         await callback.message.edit_text(text = texts.BROADCASTING_TEXT, reply_markup=kb_back_to_service)
+    if callback.data == 'back_to_main_menu':
+        await callback.message.edit_text(text = texts.START_TEXT, reply_markup=kb_client)
     if callback.data == 'back_to_main_menu1':
         await callback.message.edit_text(text = texts.START_TEXT, reply_markup=kb_client)
     if callback.data == 'back':
@@ -202,12 +209,12 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
     if callback.data == 'back_to_services':
         await callback.message.edit_text(text=texts.SERVICE_TEXT, reply_markup=kb_service)
     if callback.data == 'make_appointment':
-        await callback.message.edit_text(text="<b>Select a date:</b>", reply_markup=create_inline_kb_days('1')[0])
+        await callback.message.edit_text(text="Select a date:", reply_markup=create_inline_kb_days('1')[0])
     if callback.data == 'asfs':
-        await callback.message.edit_text(text="<b>Select a date:</b>", reply_markup=create_inline_kb_days('1')[0])
+        await callback.message.edit_text(text="Select a date:", reply_markup=create_inline_kb_days('1')[0])
     if callback.data == 'forward':
-         await callback.message.edit_text(text="<b>Select a date:</b>", reply_markup=create_inline_kb_days('1')[1])
+         await callback.message.edit_text(text="Select a date:", reply_markup=create_inline_kb_days('1')[1])
     if callback.data == 'backward':
-         await callback.message.edit_text(text="<b>Select a date:</b>", reply_markup=create_inline_kb_days('1')[0])
+         await callback.message.edit_text(text="Select a date:", reply_markup=create_inline_kb_days('1')[0])
     await callback.answer()
 
