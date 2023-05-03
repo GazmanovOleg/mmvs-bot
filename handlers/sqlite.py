@@ -8,33 +8,39 @@ async def db_start():
     # await database.commit()
     
 
-async def create_meeting(meeting_id):
+async def create_meeting(meeting_id, other):
     await database.connect()
-    meeting = await database.fetch_one("SELECT 1 FROM meeting WHERE meeting_id == '{key}'".format(key =meeting_id))
+    meeting = await database.fetch_one("SELECT 1 FROM meeting WHERE meeting_id == :meeting_id", values = {'meeting_id':meeting_id})
+    print("dfgdfgdfg")
+    print(meeting)
     if not meeting:
-        await database.fetch_one("INSERT INTO meeting VALUES(?,?,?,?,?,?)", (meeting_id, '', '', '', '',''))
+        print("Приход")
+        values = {'meeting_id':meeting_id, 'date':"", 'time':"", 'service':" ", 'connection':" ", 'other':other}
+        query = f"INSERT INTO meeting (meeting_id, date, time, service, connection ,other) VALUES(:meeting_id, :date, :time, :service, :connection ,:other)"
+        await database.fetch_one(query, values)
         #await db.commit()
+
+
+
+        
          
 async def edit_meeting(meeting_id, name, value):
-    
     await database.connect()
+    values = {'value':value, 'meeting_id':meeting_id}
+    query = f"UPDATE meeting SET {name} = :value WHERE meeting_id = :meeting_id"
+    return await database.fetch_one(query, values)
 
-    if name == 'date':
-        query = f"UPDATE meeting SET date = :date WHERE meeting_id = :meeting_id"
-       
-        await database.execute(query,values={'date':value,'meeting_id':meeting_id})
-    else:
-        query = f"UPDATE meeting SET {name} = ? WHERE meeting_id = ?"
-        
-        await database.execute(query, (value, meeting_id))
-    #db.commit()  
+  
+
+
 
 
 async def get_meet_by_id(meeting_id):
+    print("Приход2222")
     await database.connect()
+    query = f"SELECT date, time, connection FROM meeting WHERE meeting_id == {meeting_id}"
     
-    meeting = await database.execute(f"SELECT date, time FROM meeting WHERE meeting_id == {meeting_id}")
-    return await meeting.fetchone()
+    return await database.fetch_one(query)
 
 
 async def get_meetings():
@@ -44,8 +50,9 @@ async def get_meetings():
 
 
 async def get_busy_times_by_day(day):
+   
     await database.connect()
 
-    return await database.fetch_all("SELECT time FROM meeting WHERE date == '{key}'".format(key = day))
+    return await database.fetch_all("SELECT time FROM meeting WHERE date == :day", values={'day':day})
     
    

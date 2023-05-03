@@ -35,7 +35,7 @@ kb_get_in_touch : InlineKeyboardMarkup = InlineKeyboardMarkup(inline_keyboard = 
 
 
 btc = InlineKeyboardButton(text="Back", callback_data='back_to_services')
-btc1 = InlineKeyboardButton(text="Оставить заявку", callback_data='make_appointment_with_serv')
+btc1 = InlineKeyboardButton(text="Leave a request", callback_data='make_appointment_with_serv')
 kb_back_to_service : InlineKeyboardMarkup = InlineKeyboardMarkup(inline_keyboard = [[btc1],[btc]])
 
 

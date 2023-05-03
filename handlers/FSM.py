@@ -11,4 +11,4 @@ class FSMFillForm(StatesGroup):
     date = State()        # Состояние ожидания ввода имени
     time = State()         # Состояние ожидания ввода возраста
     fill_other = State()      # Состояние ожидания выбора пола
-
+    service  = State()
