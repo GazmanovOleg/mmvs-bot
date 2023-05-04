@@ -46,7 +46,7 @@ async def get_meet_by_id(meeting_id):
 async def get_meetings():
     await database.connect()
     
-    return await  database.execute(f"SELECT date, time FROM meeting").fetchall()
+    return await  database.execute(f"SELECT date, time FROM meeting").fetch_all()
 
 
 async def get_busy_times_by_day(day):
