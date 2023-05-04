@@ -1,3 +1,5 @@
-TOKEN = '6206992267:AAEHOjmvAoDrH1oThZdawn2w0Adc5xwMYSE'
 from databases import Database
+import os
 database = Database('sqlite+aiosqlite:///new.db')
+TOKEN = os.environ.get('TOKEN', '')
+print('TOKEN:', TOKEN)
