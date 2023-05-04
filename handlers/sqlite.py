@@ -30,9 +30,6 @@ async def edit_meeting(meeting_id, name, value):
     query = f"UPDATE meeting SET {name} = :value WHERE meeting_id = :meeting_id"
     return await database.fetch_one(query, values)
 
-  
-
-
 
 
 async def get_meet_by_id(meeting_id):
@@ -46,7 +43,7 @@ async def get_meet_by_id(meeting_id):
 async def get_meetings():
     await database.connect()
     
-    return await  database.execute(f"SELECT date, time FROM meeting").fetch_all()
+    return await  database.fetch_all(f"SELECT date, time FROM meeting")
 
 
 async def get_busy_times_by_day(day):
