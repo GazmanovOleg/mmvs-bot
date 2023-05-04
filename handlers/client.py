@@ -158,7 +158,7 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
         mess = f"username: @{user_name}\nИмя пользователя: {name}\nЯзык {lg}\nВремя обращения: {time}\nВремя записи: {time_1}\nДень записи: {day_1}\nСпособ связи: {serv}"
         
         send_email_t.delay(f'Новая запись:\n{mess}')
-        #await send_email(f'Новая запись: { await get_meet_by_id(callback.from_user.id)}')
+        await send_email(f'Новая запись:\n{mess}')
     
         await bot.send_message(424726862, f'Новая запись:\n{mess}')
         await callback.message.edit_text(text=answer, reply_markup=kb_back_to_time)
