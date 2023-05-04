@@ -21,7 +21,6 @@ async def main():
     
 
 if __name__ == '__main__':
-    print("БОТ АЛЁ")
     asyncio.run(main())
     #dp.run_polling(bot)
     

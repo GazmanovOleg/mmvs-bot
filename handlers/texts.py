@@ -40,24 +40,23 @@ We can develop:
 ✅Video editors
 """
 
-DEVELOPMENT_TEXT = """Our development team will analyze, develop, 
-test and implement the service for your needs.
-We have expertise in working with databases,
-front-end andback-end
-development, which enables us to produce high quality software
-products in any direction."""
+DEVELOPMENT_TEXT = """Our development team will analyze, develop, test and implement
+the service for your needs. 
+We have expertise in working with databases, front-end and back-
+end development, which enables us to produce high quality
+software products in any direction."""
 
 VIDEO_SERVICES_TEXT = """Our team can develop an online or offline video service for you.
-We have extensive experience with video hosting,
-online players, and video editors.
+We have extensive experience with video hosting, online players,
+and video editors.
 We can also integrate a video service on your website or blog.
 """
                             
 BROADCASTING_TEXT = """We specialize in video streaming technology and can add
-streaming functionality to anything. Our services include
-developing a streaming platform for you, adding live video
-feeds to your website, creating online video chat systems
-and providing remote camera connection services.
+streaming functionality to anything.
+Our services include developing a streaming platform for you,
+adding live video feeds to your website, creating online video chat
+systems and providing remote camera connection services.
 
 With the experience of our team, anything is possible!"""
 
