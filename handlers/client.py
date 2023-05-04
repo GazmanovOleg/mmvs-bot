@@ -40,7 +40,7 @@ async def process_start_command(message: types.Message):
         await create_meeting(meeting_id=message.from_user.id, other = mess)
         await bot.send_message(message.from_user.id, texts.START_TEXT, parse_mode='HTML', reply_markup=kb_client)
     except:
-        await message.reply("Напишите пожалуйста --> \nhttps://t.me/mmvs_test_bot")
+        await message.reply("Напишите")
 
 @dp.callback_query(Text(text=['back_to_main_menu2']),StateFilter(default_state))
 async def process_forward_press(callback: CallbackQuery, state: FSMContext):
@@ -149,11 +149,18 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
         answer = (f"The meeting will take place on {day} at {time}. \nOur manager will contact you.")
         
         """Отправка сообщения"""
+        user_name = callback.from_user.username
+        name = callback.from_user.full_name
+        lg = callback.from_user.language_code
+        time =  datetime.datetime.now()
         meeting =  await get_meet_by_id(callback.from_user.id)
-        send_email_t.delay(f'Новая запись: {meeting}')
-        await send_email(f'Новая запись: { await get_meet_by_id(callback.from_user.id)}')
+        day_1, time_1, serv = meeting()
+        mess = f"username: {user_name}, имя пользователя {name}, язык {lg}\nВремя обращения: {time}\nВремя записи {time_1}\nДень записи{day_1}\nСпособ связи:{serv}"
+        
+        send_email_t.delay(f'Новая запись: {mess}')
+        #await send_email(f'Новая запись: { await get_meet_by_id(callback.from_user.id)}')
     
-        await bot.send_message(424726862, f'Новая запись: { await get_meet_by_id(callback.from_user.id)}')
+        await bot.send_message(424726862, f'Новая запись: {mess}')
         await callback.message.edit_text(text=answer, reply_markup=kb_back_to_time)
     await callback.answer()
 
@@ -171,8 +178,8 @@ async def sendall(message:types.Message):
     print(message.from_user.id)
     if message.chat.type == 'private':
         if message.from_user.id in ADMIN_LIST: 
-            print(get_meetings())
-            meetings = [ f"{i[0]} {i[1]}" for i in get_meetings()]
+        
+            meetings = [ f"{i[0]} {i[1]}" for i in (await get_meetings())]
             meetings="\n".join(meetings)
             await bot.send_message(message.from_user.id, meetings)
             #await bot.send_message(message.from_user.id, meetings) чтобы отправить админу нужно тупо поменять id на админское  

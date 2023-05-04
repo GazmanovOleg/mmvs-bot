@@ -72,5 +72,40 @@ def what_is_this_text(text):
         answer = "Разработка"
     if text == APPLICATION_TEXT.split():
         answer = "Приложение"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     
     return answer
