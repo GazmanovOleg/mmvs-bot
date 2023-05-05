@@ -64,7 +64,6 @@ def what_is_this_text(text):
     answer = ''
     text = ("<b>"+text+"</b>").split()
     if text == BROADCASTING_TEXT.split():
-        print("Текст зашел в трансляции")
         answer = "Видео стриминг"
     if text == VIDEO_SERVICES_TEXT.split():
         answer = "Видео сервис"

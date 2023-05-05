@@ -1,11 +1,9 @@
 from aiogram import types, Dispatcher
-
 from celeryapp import send_email_t
 from .texts import what_is_this_text
 from create_bot import dp, bot
 from keyboards.client_kb import kb_client, kb_service, kb_get_in_touch, kb_back_to_service, kb_back_to_time, kb_back_to_time, kb_connect
 from . import texts
-from mail import send_email
 import datetime
 from .example import Meeting, Meeting_list
 from .sqlite import create_meeting, edit_meeting, get_meet_by_id, get_meetings, get_busy_times_by_day
@@ -27,8 +25,6 @@ ADMIN_LIST = [424726862]
 meeting_list = Meeting_list()
 
 
-
-
 @dp.message(CommandStart(),StateFilter(default_state))
 async def process_start_command(message: types.Message):
     try:
@@ -44,7 +40,6 @@ async def process_start_command(message: types.Message):
 
 @dp.callback_query(Text(text=['back_to_main_menu2']),StateFilter(default_state))
 async def process_forward_press(callback: CallbackQuery, state: FSMContext):
-    """Тут нужна машина состояний"""
     servise = (await state.get_data())['service']
     text = texts.APPLICATION_TEXT
     if servise == 'application':
@@ -56,8 +51,7 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
     if servise == 'broadcasting':
         text = texts.BROADCASTING_TEXT
    
-    
-    #await edit_meeting(callback.from_user.id, 'service', service_name)
+
     await callback.message.edit_text(text=text, reply_markup= kb_back_to_service)
     await callback.answer()
 
@@ -65,11 +59,8 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
 @dp.callback_query(Text(text=['make_appointment_with_serv']), StateFilter(default_state))
 async def process_forward_press(callback: CallbackQuery, state: FSMContext ):
     text_name = [i for i in callback.message][20][1]
-    
     service_name = what_is_this_text(text_name)
     meeting_list.add_to_list(Meeting(meeting_id = callback.from_user.id, service = service_name))
-    
-    
     await edit_meeting(callback.from_user.id, 'service', service_name)
     await callback.message.edit_text(text="Select a date:", reply_markup= create_inline_kb_days('2')[0])
     await callback.answer()
@@ -86,16 +77,11 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
         month = str(*date.keys())
         date = date[month]
        
-       
         """Тут будет устанавливаться день"""
 
         selected_date = month+" "+date[callback.data]
-
         meeting_list.add_to_list(Meeting(meeting_id = callback.from_user.id, date = selected_date))
-        #await create_meeting(meeting_id=callback.from_user.id) # создание пользователя записи в бд
-        
         await edit_meeting(callback.from_user.id, 'date', selected_date)
-        
         await state.update_data(date=selected_date) #установка даты
         await callback.message.edit_text(text="Select a time:", reply_markup=await create_inline_kb_time_btn(selected_date))
 
@@ -136,15 +122,12 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
     else:
         """Тут будет устанавливться зум"""
         meet_id = callback.from_user.id
-
         connect = "tg"
         if callback.data == "con_zoom":
             connect = "zoom"
-
         meeting_list.add_to_list(Meeting(meeting_id = callback.from_user.id, connection = connect))
         await edit_meeting(callback.from_user.id, 'connection', connect)
         await state.update_data(connect=connect)
-       
         day, time, place = await get_meet_by_id(meet_id)
         answer = (f"The meeting will take place on {day} at {time}. \nOur manager will contact you.")
         
@@ -158,12 +141,9 @@ async def process_forward_press(callback: CallbackQuery, state: FSMContext):
         mess = f"username: @{user_name}\nИмя пользователя: {name}\nЯзык {lg}\nВремя обращения: {time}\nВремя записи: {time_1}\nДень записи: {day_1}\nСпособ связи: {serv}"
         
         send_email_t.delay(f'Новая запись:\n{mess}')
-        await send_email(f'Новая запись:\n{mess}')
-    
         await bot.send_message(424726862, f'Новая запись:\n{mess}')
         await callback.message.edit_text(text=answer, reply_markup=kb_back_to_time)
     await callback.answer()
-
 
 
 @dp.callback_query(Text(text=['back_to_time']))
@@ -175,20 +155,15 @@ async def process_forward_press(callback: CallbackQuery):
 
 @dp.message(Command(commands=['sendall']))
 async def sendall(message:types.Message):
-    print(message.from_user.id)
     if message.chat.type == 'private':
-        if message.from_user.id in ADMIN_LIST: 
-        
+        if message.from_user.id in [_ for _ in ADMIN_LIST]:
             meetings = [ f"{i[0]} {i[1]}" for i in (await get_meetings())]
             meetings="\n".join(meetings)
             await bot.send_message(message.from_user.id, meetings)
-            #await bot.send_message(message.from_user.id, meetings) чтобы отправить админу нужно тупо поменять id на админское  
-
-
+            
   
 @dp.callback_query(StateFilter(default_state))
 async def process_forward_press(callback: CallbackQuery, state: FSMContext):
-    print(callback.data)
     if callback.data == 'service':
         await callback.message.edit_text(text=texts.SERVICE_TEXT, reply_markup=kb_service)
     if callback.data == 'about_us':
