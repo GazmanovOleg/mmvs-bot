@@ -157,7 +157,7 @@ async def process_forward_press(callback: CallbackQuery):
 async def sendall(message:types.Message):
     if message.chat.type == 'private':
         if message.from_user.id in [_ for _ in ADMIN_LIST]:
-            meetings = [ f"{i[0]} {i[1]}" for i in (await get_meetings())]
+            meetings = [ f"Дата: {i[0]} {i[1]} Cредство связи: {i[2]} услуга: {i[3]}\n\t Пользовательская инфа:{i[4]}\n" for i in (await get_meetings())]
             meetings="\n".join(meetings)
             await bot.send_message(message.from_user.id, meetings)
             
